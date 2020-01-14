@@ -1,0 +1,21 @@
+[package]
+name = "urlmatch"
+version = "0.0.1"
+description = "Rust library for url pattern matching. Can be useful in your url dispatcher."
+license = "MIT"
+keywords = ["url", "pattern", "match"]
+authors = ["Sergei Minaev <brainsburn@yandex.ru>"]
+edition = "2018"
+
+[lib]
+name = "urlmatch"
+
+[[bin]]
+name = "urlmatch"
+path = "src/bin/main.rs"
+
+
+[dependencies]
+regex = "1.3.3"
+url = "2.1.1"
+lazy_static = "1.4.0"
