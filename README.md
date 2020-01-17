@@ -30,8 +30,8 @@ fn main() {
 fn url_dispatcher(url: &str) {
     let routes = vec![
         Path {p: &"/", f: home},
-        Path {p: &"/catalogue/:ctg/:id/", f: profile},
-        Path {p: &"/:profile/", f: catalogue},
+        Path {p: &"/catalogue/:ctg/:id/", f: catalogue},
+        Path {p: &"/profile/:username/", f: profile},
     ];
     for route in routes.iter() {
         let r = urlmatch(url, route.p);
@@ -45,10 +45,10 @@ fn url_dispatcher(url: &str) {
 fn home(args: &HashMap<String, &str>) {
     println!("home(), args: {:?}", args);
 }
-fn profile(args: &HashMap<String, &str>) {
-    println!("profile(), args: {:?}", args);
-}
 fn catalogue(args: &HashMap<String, &str>) {
     println!("catalogue(), args: {:?}", args);
+}
+fn profile(args: &HashMap<String, &str>) {
+    println!("profile(), args: {:?}", args);
 }
 ```
