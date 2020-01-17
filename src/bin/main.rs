@@ -1,5 +1,1 @@
-use urlmatch;
-
-fn main() {
-    urlmatch::urlmatch();
-}
+fn main() {}
