@@ -3,9 +3,13 @@ extern crate lazy_static;
 use regex::Regex;
 use std::collections::HashMap;
 
+pub struct UrlMatchResp<'a> {
+    pub keys: HashMap<String, &'a str>,
+    pub is_matched: bool,
+}
 
 pub fn urlmatch<'a>(url: &'a str, pattern: &str
-                    ) -> HashMap<String, &'a str> {
+                    ) -> UrlMatchResp<'a> {
     lazy_static! {
         static ref RE_KEYS: Regex = Regex::new(r":(?P<key>[.a-zA-Z0-9_-]+)").unwrap();
     }
@@ -15,7 +19,10 @@ pub fn urlmatch<'a>(url: &'a str, pattern: &str
     let re = Regex::new(&["^", pattern_full, "$"].concat()).unwrap();
     
     let caps = match re.captures(url_split[0]) {
-        None => return keys,
+        None => return UrlMatchResp {
+            keys: keys,
+            is_matched: false,
+        },
         Some(r) => r,
     };
 
@@ -25,7 +32,10 @@ pub fn urlmatch<'a>(url: &'a str, pattern: &str
         }
     }
 
-    return keys;
+    return UrlMatchResp {
+        keys: keys,
+        is_matched: true,
+    }
 }
 
 #[cfg(test)]
@@ -36,12 +46,12 @@ mod tests {
         let correct_rel_url = "/en/v_3.0?lang=en&nav=42#title";
         let correct_pattern = "/:lang/:version";
         let r = urlmatch(correct_rel_url, correct_pattern);
-        assert!(!r.is_empty());
-        assert_eq!(r.len(), 2);
-        assert_eq!(r.get("lang"), Some(&"en"));
-        assert_eq!(r.get("version"), Some(&"v_3.0"));
-        assert!(r.contains_key("lang"));
-        assert!(!r.contains_key("wrong_key"));
+        assert!(r.is_matched);
+        assert_eq!(r.keys.len(), 2);
+        assert_eq!(r.keys.get("lang"), Some(&"en"));
+        assert_eq!(r.keys.get("version"), Some(&"v_3.0"));
+        assert!(r.keys.contains_key("lang"));
+        assert!(!r.keys.contains_key("wrong_key"));
     }
 
     #[test]
@@ -49,12 +59,12 @@ mod tests {
         let correct_abs_url = "https://example.com/en/v_3.0?lang=en&nav=42#title";
         let correct_pattern = "https://example.com/:lang/:version";
         let r = urlmatch(correct_abs_url, correct_pattern);
-        assert!(!r.is_empty());
-        assert_eq!(r.len(), 2);
-        assert_eq!(r.get("lang"), Some(&"en"));
-        assert_eq!(r.get("version"), Some(&"v_3.0"));
-        assert!(r.contains_key("lang"));
-        assert!(!r.contains_key("wrong_key"));
+        assert!(r.is_matched);
+        assert_eq!(r.keys.len(), 2);
+        assert_eq!(r.keys.get("lang"), Some(&"en"));
+        assert_eq!(r.keys.get("version"), Some(&"v_3.0"));
+        assert!(r.keys.contains_key("lang"));
+        assert!(!r.keys.contains_key("wrong_key"));
     }
 
     #[test]
@@ -62,14 +72,14 @@ mod tests {
         let correct_abs_url = "https://example.com/en/v_3.0?lang=en&nav=42#title";
         let correct_pattern = ":protocol://:host/:lang/:version";
         let r = urlmatch(correct_abs_url, correct_pattern);
-        assert!(!r.is_empty());
-        assert_eq!(r.len(), 4);
-        assert_eq!(r.get("protocol"), Some(&"https"));
-        assert_eq!(r.get("host"), Some(&"example.com"));
-        assert_eq!(r.get("lang"), Some(&"en"));
-        assert_eq!(r.get("version"), Some(&"v_3.0"));
-        assert!(r.contains_key("lang"));
-        assert!(!r.contains_key("wrong_key"));
+        assert!(r.is_matched);
+        assert_eq!(r.keys.len(), 4);
+        assert_eq!(r.keys.get("protocol"), Some(&"https"));
+        assert_eq!(r.keys.get("host"), Some(&"example.com"));
+        assert_eq!(r.keys.get("lang"), Some(&"en"));
+        assert_eq!(r.keys.get("version"), Some(&"v_3.0"));
+        assert!(r.keys.contains_key("lang"));
+        assert!(!r.keys.contains_key("wrong_key"));
     }
 
     #[test]
@@ -77,7 +87,7 @@ mod tests {
         let url = "abc";
         let pattern = "/:lang/:version";
         let r = urlmatch(url, pattern);
-        assert!(r.is_empty());
+        assert!(!r.is_matched);
     }
 
     #[test]
@@ -85,7 +95,7 @@ mod tests {
         let url = "/en?/v_3.0?lang=en&nav=42#";
         let pattern = "/:lang/:version";
         let r = urlmatch(url, pattern);
-        assert!(r.is_empty());
+        assert!(!r.is_matched);
     }
 
     #[test]
@@ -93,6 +103,6 @@ mod tests {
         let url = "/en/:v_3.0?lang=en&nav=42#";
         let pattern = "/:lang/:version";
         let r = urlmatch(url, pattern);
-        assert!(r.is_empty());
+        assert!(!r.is_matched);
     }
 }

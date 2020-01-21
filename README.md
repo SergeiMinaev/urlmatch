@@ -7,8 +7,8 @@ use urlmatch::urlmatch;
 fn main() {
     let r = urlmatch("https://example.com/en/v_3.0/",
                      "https://example.com/:lang/:version/");
-    println!("keys: {:?}", r);
-    println!("lang: {}", r["lang"]);
+    println!("keys: {:?}", r.keys);
+    println!("lang: {}", r.keys["lang"]);
 }
 ```
 
@@ -35,7 +35,7 @@ fn url_dispatcher(url: &str) {
     ];
     for route in routes.iter() {
         let r = urlmatch(url, route.p);
-        if !r.is_empty() {
+        if r.is_matched {
             (route.f)(&r);
             break;
         }
