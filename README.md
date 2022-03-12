@@ -36,7 +36,7 @@ fn url_dispatcher(url: &str) {
     for route in routes.iter() {
         let r = urlmatch(url, route.p);
         if r.is_matched {
-            (route.f)(&r);
+            (route.f)(&r.keys);
             break;
         }
     }
