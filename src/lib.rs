@@ -48,8 +48,8 @@ mod tests {
         let r = urlmatch(correct_rel_url, correct_pattern);
         assert!(r.is_matched);
         assert_eq!(r.keys.len(), 2);
-        assert_eq!(r.keys.get("lang"), Some(&"en"));
-        assert_eq!(r.keys.get("version"), Some(&"v_3.0"));
+        assert_eq!(r.keys.get("lang"), Some(&"en".to_string()));
+        assert_eq!(r.keys.get("version"), Some(&"v_3.0".to_string()));
         assert!(r.keys.contains_key("lang"));
         assert!(!r.keys.contains_key("wrong_key"));
     }
@@ -61,8 +61,8 @@ mod tests {
         let r = urlmatch(correct_abs_url, correct_pattern);
         assert!(r.is_matched);
         assert_eq!(r.keys.len(), 2);
-        assert_eq!(r.keys.get("lang"), Some(&"en"));
-        assert_eq!(r.keys.get("version"), Some(&"v_3.0"));
+        assert_eq!(r.keys.get("lang"), Some(&"en".to_string()));
+        assert_eq!(r.keys.get("version"), Some(&"v_3.0".to_string()));
         assert!(r.keys.contains_key("lang"));
         assert!(!r.keys.contains_key("wrong_key"));
     }
@@ -74,10 +74,10 @@ mod tests {
         let r = urlmatch(correct_abs_url, correct_pattern);
         assert!(r.is_matched);
         assert_eq!(r.keys.len(), 4);
-        assert_eq!(r.keys.get("protocol"), Some(&"https"));
-        assert_eq!(r.keys.get("host"), Some(&"example.com"));
-        assert_eq!(r.keys.get("lang"), Some(&"en"));
-        assert_eq!(r.keys.get("version"), Some(&"v_3.0"));
+        assert_eq!(r.keys.get("protocol"), Some(&"https".to_string()));
+        assert_eq!(r.keys.get("host"), Some(&"example.com".to_string()));
+        assert_eq!(r.keys.get("lang"), Some(&"en".to_string()));
+        assert_eq!(r.keys.get("version"), Some(&"v_3.0".to_string()));
         assert!(r.keys.contains_key("lang"));
         assert!(!r.keys.contains_key("wrong_key"));
     }

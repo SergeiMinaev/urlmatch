@@ -1,6 +1,6 @@
 [package]
 name = "urlmatch"
-version = "0.1.0"
+version = "0.2.0"
 description = "Rust library for url pattern matching. Can be useful in your url dispatcher."
 license = "MIT"
 keywords = ["url", "pattern", "match"]
