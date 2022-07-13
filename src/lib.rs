@@ -3,19 +3,19 @@ extern crate lazy_static;
 use regex::Regex;
 use std::collections::HashMap;
 
-pub struct UrlMatchResp<'a> {
-    pub keys: HashMap<String, &'a str>,
+pub struct UrlMatchResp {
+    pub keys: HashMap<String, String>,
     pub is_matched: bool,
 }
 
-pub fn urlmatch<'a>(url: &'a str, pattern: &str
-                    ) -> UrlMatchResp<'a> {
+pub fn urlmatch(url: &str, pattern: &str
+                    ) -> UrlMatchResp {
     lazy_static! {
         static ref RE_KEYS: Regex = Regex::new(r":(?P<key>[.a-zA-Z0-9_-]+)").unwrap();
     }
     let url_split: Vec<&str> = url.split("?").collect();
     let pattern_full = &RE_KEYS.replace_all( &pattern, r"(?P<$key>[.a-zA-Z0-9_-]+)");
-    let mut keys: HashMap<String, &str> = HashMap::new();
+    let mut keys: HashMap<String, String> = HashMap::new();
     let re = Regex::new(&["^", pattern_full, "$"].concat()).unwrap();
     
     let caps = match re.captures(url_split[0]) {
@@ -28,7 +28,7 @@ pub fn urlmatch<'a>(url: &'a str, pattern: &str
 
     for (index, key) in re.capture_names().enumerate() {
         if let (Some(k), Some(c)) = (key, caps.get(index)) {
-            keys.insert(k.to_owned(), c.as_str());
+            keys.insert(k.to_owned(), c.as_str().to_string());
         }
     }
 
